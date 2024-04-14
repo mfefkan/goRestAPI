@@ -7,6 +7,7 @@ import (
 	"test/user"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
@@ -24,8 +25,16 @@ func main() {
 	handler := user.NewHandler(service)
 
 	app := fiber.New()
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*", // Tüm domainlerden gelen isteklere izin ver
+		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+	}))
+
 	app.Get("/users/:id", handler.Get)
 	app.Post("/users", handler.Create)
-
+	app.Put("/users/:id/balance", handler.UpdateBalance)
+	app.Put("/users/:id/guess", handler.GuessAndUpdateBalance)
 	app.Listen(":8000")
 }
