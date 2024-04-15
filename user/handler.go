@@ -100,6 +100,13 @@ func (h handler) GuessAndUpdateBalance(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(Response{Error: "Invalid request body"})
 	}
 
+	// Targets array'indeki her değerin 2 ile 98 arasında olup olmadığını kontrol et
+	for _, target := range request.Targets {
+		if target < 2 || target > 98 {
+			return c.Status(fiber.StatusBadRequest).JSON(Response{Error: "Targets must be between 2 and 98 inclusive"})
+		}
+	}
+
 	// Servis katmanında GuessAndUpdateBalance işlemini gerçekleştir
 	result, err := h.service.GuessAndUpdateBalance(uint(id), request.Amount, request.Targets)
 	if err != nil {
